@@ -5,6 +5,23 @@ import os
 class TestTPM:
     def flushtpm(self):
         subprocess.run(["tpm2_flushcontext", "-t"])
+    
+    def createprimary(self):
+        subprocess.run([
+            "tpm2_createprimary", "-C", "o"
+            "-g", "sha256",
+            "-G", "rsa",
+            "-c", "primary.ctx"
+        ])
+
+    def createaeskeys(self):
+        subprocess.run([
+            "tpm2_create", "-C", "primary.ctx"
+            "-G", "aes256",
+            "-u", "aes.pub",
+            "-r", "aes.priv",
+            "-c", "aes.ctx"
+        ])
 
     def load_aes_key(self):
         subprocess.run([
@@ -30,3 +47,11 @@ class TestTPM:
             "-o", output,
             input
         ])
+
+    def start(self):
+        subprocess.run([
+            "tpm2_startup", "-c"
+            ])
+        
+
+# Tasks: create pilot script, create tester object, store data and plot dashboard to assess capabilities
