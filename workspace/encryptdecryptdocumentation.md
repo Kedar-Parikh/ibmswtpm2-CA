@@ -186,9 +186,28 @@ tpm2_encryptdecrypt  -c  aes.ctx  -o  encrypted.dat  plain.txt
 
 ------------------------------------------------------------------------
 
+### 10. Clear loaded objects and load keys again (Prevents Slot Errors)
+
+``` bash
+
+tpm2_flushcontext  -t
+
+```
   
 
-### 10. Decrypt Data
+``` bash
+
+tpm2_load  -C  primary.ctx  -u  aes.pub  -r  aes.priv  -c  aes.ctx
+
+```
+
+  
+
+------------------------------------------------------------------------
+
+  
+
+### 11. Decrypt Data
 
   
 
@@ -204,7 +223,7 @@ tpm2_encryptdecrypt  -d  -c  aes.ctx  -o  decrypted.txt  encrypted.dat
 
   
 
-### 11. Verify Decryption
+### 12. Verify Decryption
 
   
 
@@ -220,7 +239,7 @@ cat  decrypted.txt
 
   
 
-### 12. Flush Loaded Keys
+### 13. Flush Loaded Keys
 
   
 
