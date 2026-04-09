@@ -2,11 +2,12 @@ import subprocess
 
 
 class TestTPM:
-    def start(self):
-        subprocess.run(["tpm2_startup", "-c"])
+    def initialisetpm(self):
+        initialisationoutput = subprocess.run(["tpm2_startup", "-c"], capture_output=True)
 
     def flushtpm(self):
         subprocess.run(["tpm2_flushcontext", "-t"])
+
 
     def createprimary(self):
         subprocess.run([

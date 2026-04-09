@@ -1,28 +1,37 @@
 import TestTPM
-import json, os, time
+import os, time
 
 filename = "plain.txt"
 encryptedfilename = "cipher.bin"
 decryptedfilename = "decrypted.txt"
-metricsfilename = "metrics.json"
 
-def measure_metrics(label, func):
-    start = time.perf_counter
-    func()
-    time_in_ms = round((time.perf_counter() - start) * 1000, 2)
-    print(f"{label:30s} {time_in_ms} ms")
-    return {"Operation: ": label, "Elapsed Time (in ms)": time_in_ms}
+def return_function_time_taken(func, *args, **kwargs):
+    start = time.perf_counter()
+    func(*args, **kwargs)
+    end = time.perf_counter()
+    result = end - start
+    return result
 
-def main():
-    tpm_tester = TestTPM()
-    metrics = []
-    filesize = os.path.getsize(filename)
-    
-    print("[*] Startup and Key Generation")
-    metrics.append(measure_metrics("start",          tpm_tester.start))
-    metrics.append(measure_metrics("create_primary", tpm_tester.createprimary))
-    metrics.append(measure_metrics("flush",          tpm_tester.flushtpm))
-    metrics.append(measure_metrics("create_aes_key", tpm_tester.createaeskeys))
-    metrics.append(measure_metrics("flush",          tpm_tester.flushtpm))
 
-    
+tpm = TestTPM.TestTPM()
+filesize = os.path.getsize(filename)
+result = tpm.initialisetpm()
+if(not result):
+    flushtime = return_function_time_taken(tpm.flushtpm)
+    createprimarytime = return_function_time_taken(tpm.createprimary)
+    return_function_time_taken(tpm.flushtpm)
+    createaestime = return_function_time_taken(tpm.createaeskeys)
+    return_function_time_taken(tpm.flushtpm)
+    loadaestime = return_function_time_taken(tpm.load_aes_key)
+    aesencrypttime = return_function_time_taken(tpm.encrypt, filename, encryptedfilename)
+    return_function_time_taken(tpm.flushtpm)
+    return_function_time_taken(tpm.load_aes_key)
+    aesdecrypttime = return_function_time_taken(tpm.decrypt, encryptedfilename, decryptedfilename)
+
+    print(
+        f'Flush Time: {flushtime}\n Create Primary Time: {createprimarytime}\n Create AES Key Time: {createaestime}\n Load AES Time: {loadaestime}\n AES Encryption Time: {aesencrypttime}\n AES Decryption Time: {aesdecrypttime}\n'
+    )
+else:
+    print("[!] Error Initialising TPM, please ensure server is running and connection variables are in order")
+    exit(-1)
+
