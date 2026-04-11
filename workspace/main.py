@@ -19,12 +19,12 @@ def return_function_time_taken(func, *args, **kwargs):
 
 def save_metrics_simple(filesize, enc_time, cipher_filesize, dec_time, enc_throughput, dec_throughput, filename="results.json"):
     entry = {
-        "plain_filesize (bytes)": filesize,
-        "enc_time(s)": enc_time,
-        "cipher_filesize(bytes)": cipher_filesize,
-        "dec_time(s)": dec_time,
-        "enc_throughput(bytes/s)": enc_throughput,
-        "dec_throughput(bytes/s)": dec_throughput
+        "plain_filesize (kb)": filesize,
+        "enc_time(ms)": enc_time,
+        "cipher_filesize(kb)": cipher_filesize,
+        "dec_time(ms)": dec_time,
+        "enc_throughput(kb/ms)": enc_throughput,
+        "dec_throughput(kb/ms)": dec_throughput
     }
 
     data = []
@@ -66,7 +66,7 @@ if(not result):
     decrypt_throughput = (cipher_filesize/aesdecrypttime)
 
     
-    save_metrics_simple(filesize, aesencrypttime, cipher_filesize, aesdecrypttime, encrypt_throughput, decrypt_throughput)
+    save_metrics_simple((filesize/1000), (aesencrypttime*1000), (cipher_filesize/1000), (aesdecrypttime*1000), (encrypt_throughput/1000000), (decrypt_throughput/1000000))
     
 else:
     print("[!] Error Initialising TPM, please ensure server is running and connection variables are in order")
